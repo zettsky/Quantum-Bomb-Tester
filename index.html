@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quantum Bomb Tester</title>
+  <meta name="description" content="A pixel-art physics game about quantum interference and interaction-free measurement (the Elitzur–Vaidman bomb tester).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ============ Title screen ============ -->
+  <section id="screen-title" class="screen active" aria-label="Title screen">
+    <canvas id="title-bg" aria-hidden="true"></canvas>
+    <div class="title-wrap">
+      <div class="logo">
+        <div class="logo-small">HSI2011 &middot; Quantum Optics Lab</div>
+        <h1>Quantum<br>Bomb Tester</h1>
+        <div class="logo-sub">Find the specimen. Never touch it.</div>
+      </div>
+      <nav class="menu panel" aria-label="Main menu">
+        <button class="btn big" id="btn-new" type="button">New Game</button>
+        <button class="btn big alt" id="btn-resume" type="button">Resume</button>
+        <button class="btn big alt" id="btn-settings" type="button">Settings</button>
+      </nav>
+      <p class="title-foot">Arrow keys / WASD to move &middot; E to interact &middot; best with sound on</p>
+    </div>
+  </section>
+
+  <!-- ============ Lab (hub world) ============ -->
+  <section id="screen-game" class="screen" aria-label="The lab">
+    <header class="hud">
+      <div class="hud-left">
+        <div class="hud-title">Lab progress</div>
+        <div class="hud-slots" id="hud-slots"></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-stats" id="hud-stats"></div>
+        <button class="icon-btn" id="hud-chat" type="button" title="Ask the professor (C)" aria-label="Ask the professor"></button>
+        <button class="icon-btn" id="hud-book" type="button" title="Notebook (N)" aria-label="Notebook"></button>
+        <button class="icon-btn" id="hud-gear" type="button" title="Settings" aria-label="Settings"></button>
+        <button class="icon-btn" id="hud-menu" type="button" title="Menu (Esc)" aria-label="Menu"></button>
+      </div>
+    </header>
+    <div class="world-wrap" id="world-wrap">
+      <canvas id="world" aria-label="The quantum optics lab. Walk to a numbered bench and press E to start a level."></canvas>
+      <div id="prompt" class="prompt hidden"></div>
+    </div>
+    <div class="touch" id="touch" aria-hidden="true">
+      <div class="dpad">
+        <button data-dir="up" class="d-up" type="button">&#9650;</button>
+        <button data-dir="left" class="d-left" type="button">&#9664;</button>
+        <button data-dir="right" class="d-right" type="button">&#9654;</button>
+        <button data-dir="down" class="d-down" type="button">&#9660;</button>
+      </div>
+      <button class="a-btn" id="touch-a" type="button">E</button>
+    </div>
+  </section>
+
+  <!-- ============ Level (experiment bench) ============ -->
+  <div id="level" class="level-screen hidden" role="dialog" aria-modal="true" aria-labelledby="lvl-title">
+    <div class="level-frame panel" id="level-frame">
+      <div class="panel-tab level-tab">
+        <span id="lvl-title"></span>
+        <span class="lvl-stats" id="lvl-stats"></span>
+        <span class="tab-actions">
+          <button class="icon-btn small" id="lvl-chat" type="button" title="Ask the professor" aria-label="Ask the professor"></button>
+          <button class="x-btn" id="lvl-close" type="button" aria-label="Leave level">&#10005;</button>
+        </span>
+      </div>
+      <div class="level-body">
+        <div class="stage inset">
+          <canvas id="diagram" width="640" height="360" aria-label="Interferometer bench"></canvas>
+          <div class="stage-bar">
+            <button class="btn small toggle hidden" id="btn-overlay" type="button">Show amplitude graphs</button>
+            <button class="btn small alt hidden" id="btn-explain" type="button">How do amplitudes combine?</button>
+          </div>
+        </div>
+        <aside class="side">
+          <div class="inset objective hidden" id="objective"></div>
+          <div class="inset controls" id="controls">
+            <div class="fire-row">
+              <button class="btn" id="fire1" type="button" disabled>Send 1 photon <span class="kbd">F</span></button>
+              <button class="btn alt hidden" id="fire10" type="button" disabled>Send 10</button>
+            </div>
+            <div class="phase-row hidden" id="phase-row">
+              <label for="phase-range">Phase shift &phi; <b id="phase-val">0&deg;</b></label>
+              <input type="range" id="phase-range" min="0" max="360" step="45" value="0">
+              <canvas id="phase-graph" width="280" height="84" aria-label="Predicted probability: gold is D1, coral is D2"></canvas>
+              <div class="legend"><span class="sw gold"></span>P(D1) = cos&sup2;(&phi;/2) <span class="sw coral"></span>P(D2)</div>
+            </div>
+            <button class="btn gold hidden" id="btn-conclude" type="button" disabled>Make a conclusion</button>
+          </div>
+          <div class="inset tally" id="tally"></div>
+        </aside>
+      </div>
+      <div class="level-dialog" id="level-dialog"></div>
+    </div>
+  </div>
+
+  <noscript>This game needs JavaScript.</noscript>
+
+  <script src="js/content.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/diagram.js"></script>
+  <script src="js/explainer.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
