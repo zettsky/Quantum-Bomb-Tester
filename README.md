@@ -54,8 +54,14 @@ elaborations, unlocked by level.
 
 ## The physics (as implemented)
 
-`js/physics.js` models a balanced Mach–Zehnder interferometer with transmission amplitude `1/√2` and reflection
-amplitude `i/√2`. The phase shifter and specimen holder sit in the lower path.
+`js/physics.js` models a balanced Mach–Zehnder interferometer using the conventions of HSI2011 lecture 3b:
+beamsplitter matrix `M = (1/√2)(1 i; i 1)`, transmission × `1/√2`, reflection × `i/√2`, each mirror × `i`.
+Path amplitudes use the lecture labels: at the bright port `A(RT) + A(TR) = −½ − ½`, at the dark port
+`A(RR) + A(TT) = −i/2 + i/2 = 0`. The phase shifter and specimen holder sit in the lower path.
+
+The game's explanations also connect to lecture 2a (random single outcomes, statistics over repeats, measurement
+collapse, conditional probability `P(A and B) = P(A)·P(B|A)`) and lecture 5a (wave–particle duality: "travels as a
+wave, arrives as a particle"; which-path information destroys interference, as in the double-slit twist).
 
 - No second beam splitter: P(D1) = P(D2) = 1/2
 - Balanced, phase φ: P(D1) = cos²(φ/2), P(D2) = sin²(φ/2)

@@ -15,6 +15,11 @@ near(a.P.d1, 1, 'balanced D1');
 near(a.P.d2, 0, 'balanced D2');
 assert.strictEqual(a.P.d2, 0, 'dark detector exactly zero');
 
+// Lecture 3b path amplitudes: A(RT) = A(TR) = -1/2, A(RR) = -i/2, A(TT) = +i/2
+const lec = P.analyse({});
+near(lec.contrib.d1[0].re, -0.5, 'A(RT)'); near(lec.contrib.d1[1].re, -0.5, 'A(TR)');
+near(lec.contrib.d2[0].im, -0.5, 'A(RR)'); near(lec.contrib.d2[1].im, 0.5, 'A(TT)');
+
 // Level 3: phase changes interference: P(D1) = cos^2(phi/2)
 for (const deg of [0, 45, 90, 135, 180, 225, 270, 315, 360]) {
   a = P.analyse({ phaseDeg: deg });

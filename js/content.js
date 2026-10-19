@@ -87,7 +87,7 @@
           'Photons reaching A carry half the energy',
         ],
         answer: 1,
-        explain: 'A probability describes the long-run fraction of many identical trials. It does not mean a fraction of a photon.',
+        explain: 'A probability |amplitude|\u00B2 shows up as the statistics of many repeats on identically prepared photons. It does not mean a fraction of a photon.',
       },
     ],
     2: [
@@ -96,17 +96,17 @@
         options: [
           'The amplitudes for the two paths add up at D1 and cancel at D2',
           'Two half-photons recombine into a whole one at the second beam splitter',
-          'The second beam splitter absorbs every photon heading for D2',
+          'Each photon interferes with the other photons in the beam',
           'Every photon secretly takes the upper path',
         ],
         answer: 0,
-        explain: 'Both paths lead to each detector. We add their amplitudes: they reinforce for D1 and cancel exactly for D2.',
+        explain: 'Each photon interferes with itself: its two paths are in superposition. At D1, A(RT) + A(TR) = \u2212\u00BD \u2212 \u00BD (they add); at D2, A(RR) + A(TT) = \u2212i/2 + i/2 = 0 (they cancel).',
       },
       {
         q: 'When two indistinguishable paths lead to the same detector, what do we add together?',
         options: ['Probabilities', 'Probability amplitudes', 'Photon energies', 'Detector counts'],
         answer: 1,
-        explain: 'Add the amplitudes first, then square the result to get the probability. Adding probabilities would never give cancellation.',
+        explain: 'Add the amplitudes first, then square. Adding probabilities (the classical way) gives \u00BC + \u00BC = \u00BD at each detector and can never cancel.',
       },
       {
         q: 'You remove the second beam splitter. What happens to the detector counts?',
@@ -161,7 +161,7 @@
         q: 'With the specimen present, how often does the normally dark detector D2 click?',
         options: ['0%', '25%', '50%', '75%'],
         answer: 1,
-        explain: 'Only the upper amplitude reaches BS2, which splits it evenly: ½ × ½ = ¼ for D2 (and ¼ for D1).',
+        explain: 'Conditional probability: P(D2) = P(not absorbed) \u00D7 P(D2 | not absorbed) = \u00BD \u00D7 \u00BD = \u00BC (and \u00BC for D1).',
       },
       {
         q: 'Why can a D2 click reveal the specimen without that photon touching it?',
@@ -172,7 +172,7 @@
           'D2 senses the heat of the specimen',
         ],
         answer: 0,
-        explain: 'D2 can only click when the lower path is blocked. The photon that clicked at D2 was detected there, so it delivered no energy to the specimen.',
+        explain: 'The specimen acts like a which-path detector: it makes the paths distinguishable, so the cancellation at D2 disappears. The photon that clicked at D2 was detected there, so it delivered no energy to the specimen.',
       },
     ],
     5: [
@@ -230,6 +230,15 @@
         ],
       },
       {
+        id: 'duality',
+        q: 'Is the photon a wave or a particle here?',
+        a: [
+          'Both faces of one quantum object: it travels as a wave and arrives as a particle.',
+          'Between source and detector, its amplitude explores both paths and interferes with itself. At a detector it shows up as one discrete photon, delivering all its energy hf at once.',
+          'It\u2019s the interferometer version of Young\u2019s double slit: two paths instead of two slits.',
+        ],
+      },
+      {
         id: 'bomb',
         q: 'Why is the game called “Bomb Tester”?',
         a: [
@@ -243,16 +252,26 @@
         a: [
           'Interaction-free ideas have inspired research on imaging light-sensitive objects while absorbing fewer photons, and on quantum-enhanced measurement.',
           'It is still mostly research rather than everyday technology. Its biggest impact has been on how physicists think about measurement.',
+          'Interferometers themselves are everywhere: LIGO detects gravitational waves using a kilometres-long interferometer, sensing changes far smaller than a proton.',
         ],
       },
     ],
     1: [
       {
+        id: 'l1-cons',
+        q: 'Why must P(T) + P(R) = 1?',
+        a: [
+          'Conservation of energy (and of probability): the photon must leave the beamsplitter somewhere. It is either transmitted or reflected.',
+          'For a 50:50 beamsplitter P(T) = P(R) = 0.5. In amplitudes: |1/\u221A2|\u00B2 + |i/\u221A2|\u00B2 = \u00BD + \u00BD = 1.',
+        ],
+      },
+      {
         id: 'l1-predict',
         q: 'Why can’t we predict which detector clicks?',
         a: [
           'Quantum mechanics gives the probability of each outcome, not a definite answer for one photon.',
-          'As far as experiments can tell, nothing hidden inside the photon decides its outcome in advance. Repeating the experiment many times is how we measure the probabilities.',
+          'As far as experiments can tell, nothing hidden inside the photon decides its outcome in advance. Each measurement gives one random outcome, and the superposition collapses to that result.',
+          'Probabilities only show up as statistics. Like the lecture example: a state (\u221A3/2)|\u2191\u27E9 + (1/2)|\u2193\u27E9 measured 1000 times gives about 750 up and 250 down.',
         ],
       },
       {
@@ -275,6 +294,31 @@
     ],
     2: [
       {
+        id: 'l2-classical',
+        q: 'Why not just multiply and add probabilities?',
+        a: [
+          'That is the classical expectation: P(TT) = P(TR) = P(RT) = P(RR) = 0.5 \u00D7 0.5 = 0.25, so each detector should get \u00BC + \u00BC = \u00BD.',
+          'Experimentally the photon ALWAYS leaves one port and never the other. Classical probabilities are real, positive weights; quantum mechanics uses complex amplitudes as weights, and complex weights can cancel.',
+        ],
+      },
+      {
+        id: 'l2-matrix',
+        q: 'Can I write the beamsplitter as a matrix?',
+        a: [
+          'Yes. Call the lower path |0\u27E9 = (1, 0) and the upper path |1\u27E9 = (0, 1). A 50:50 beamsplitter is M = (1/\u221A2)(1 i; i 1).',
+          'A photon entering in |0\u27E9 leaves as M(1, 0) = (|0\u27E9 + i|1\u27E9)/\u221A2: a superposition with 50% for each path. The reflected part always picks up the factor i.',
+          'The whole interferometer is M, then the mirrors and phase, then M again. Multiplying the matrices gives the same answer as adding the path amplitudes.',
+        ],
+      },
+      {
+        id: 'l2-what',
+        q: 'What exactly is interfering?',
+        a: [
+          'Not one photon with another! We send ONE photon at a time. Each photon interferes with itself: its possible paths are in superposition.',
+          'The paths interfere only when they are indistinguishable. (With two photons at once you get even stranger effects, like Hong\u2013Ou\u2013Mandel bunching.)',
+        ],
+      },
+      {
         id: 'l2-amp',
         q: 'Amplitude vs probability: what’s the difference?',
         a: [
@@ -287,9 +331,9 @@
         id: 'l2-cancel',
         q: 'Why exactly do the D2 amplitudes cancel?',
         a: [
-          'Each reflection at a beam splitter turns the arrow a quarter-turn (multiplies by i). Transmission does not turn it.',
-          'To reach D2, the upper route reflects twice (i × i = −1) while the lower route transmits twice (+1). Same length, opposite directions: they cancel.',
-          'To reach D1, each route reflects exactly once, so both arrows point the same way and add.',
+          'Rules from lecture 3b: transmission \u00D7 1/\u221A2, reflection \u00D7 i/\u221A2, each mirror \u00D7 i. Multiply along the path, add paths that end at the same place, square at the end.',
+          'To D2: A(RR) = (i/\u221A2)\u00B7i\u00B7(i/\u221A2) = \u2212i/2 and A(TT) = (1/\u221A2)\u00B7i\u00B7(1/\u221A2) = +i/2. Same length, opposite directions: they cancel, P = 0.',
+          'To D1: A(RT) = A(TR) = \u2212\u00BD. They point the same way and add: P = |\u22121|\u00B2 = 1.',
         ],
       },
       {
@@ -297,7 +341,8 @@
         q: 'What is “which-path information”?',
         a: [
           'If anything in the setup could reveal which path the photon took, the two paths are no longer indistinguishable and interference disappears.',
-          'Removing BS2 does this: D1 then means “upper path” and D2 means “lower path”.',
+          'Removing BS2 does this: D1 then means \u201Cupper path\u201D and D2 means \u201Clower path\u201D. It\u2019s the same as the double-slit twist: watch which slit, and the bands disappear.',
+          'Think of it as asking a different question: without BS2 you ask \u201Cwhich path?\u201D, with BS2 you ask \u201Cwhich interference port?\u201D. You can get which-path information or interference, never both at once.',
         ],
       },
       {
@@ -311,11 +356,19 @@
     ],
     3: [
       {
+        id: 'l3-kallang',
+        q: 'How is this like the Kallang wave?',
+        a: [
+          'In the stadium wave, two waves meeting \u201Cin step\u201D (arms both up) grow bigger: constructive interference. Meeting in opposite phase, they die out: destructive interference.',
+          'Here the \u201Cwaves\u201D are the two path amplitudes of a single photon. Delaying one path by 180\u00B0 swaps which detector sees constructive and which sees destructive interference.',
+        ],
+      },
+      {
         id: 'l3-phase',
         q: 'What is phase, physically?',
         a: [
           'Phase is the direction of the amplitude arrow. Making the lower path a little longer (here, a glass slab) rotates its arrow.',
-          'A delay of one whole wavelength is 360°, which brings the arrow back where it started.',
+          'A delay of one whole wavelength is 360\u00B0, which brings the arrow back where it started. In the wave equation y = A sin(kx \u2212 \u03C9t + \u03C6), it is the \u03C6 term.',
         ],
       },
       {
@@ -337,11 +390,21 @@
     ],
     4: [
       {
+        id: 'l4-measure',
+        q: 'Is the specimen making a measurement?',
+        a: [
+          'Yes! An absorbing specimen in the lower path is a which-path detector. If it absorbs the photon, the superposition collapses to \u201Clower path\u201D (measurement backaction), and the specimen is damaged.',
+          'If it does NOT absorb, that also tells us something: the photon must be in the upper path. Either way the paths are now distinguishable, so interference is destroyed and D2 can click.',
+          'As lecture 3b puts it: \u201Cno particle\u201D doesn\u2019t mean no effect on the system.',
+        ],
+      },
+      {
         id: 'l4-why',
         q: 'Why does a blocker make D2 click?',
         a: [
           'The specimen absorbs whatever arrives along the lower path. The amplitude that continues past it is zero.',
-          'Only the upper amplitude reaches BS2, with nothing to cancel against. BS2 splits it evenly: ½ × ½ = ¼ for each detector. The other ½ is absorption.',
+          'Only the upper amplitude reaches BS2, with nothing to cancel against. BS2 splits it evenly.',
+          'Using conditional probability, P(A and B) = P(A) \u00D7 P(B|A): P(D2) = P(not absorbed) \u00D7 P(D2 | not absorbed) = \u00BD \u00D7 \u00BD = \u00BC. Same for D1. The other \u00BD is absorption.',
         ],
       },
       {
@@ -374,7 +437,7 @@
         id: 'l5-bayes',
         q: 'How much do repeated bright clicks tell me?',
         a: [
-          'Start at 50/50. If the specimen is present, each bright click has probability ¼; if absent, probability 1.',
+          'This is conditional probability again. Start at 50/50. If the specimen is present, each bright click has probability \u00BC; if absent, probability 1.',
           'After n bright clicks: P(present) = (¼)ⁿ / ((¼)ⁿ + 1). That’s 20% after 1 click, 1.5% after 3, about 0.1% after 5.',
           'It gets very small, but it never reaches zero. Absence is never proven.',
         ],

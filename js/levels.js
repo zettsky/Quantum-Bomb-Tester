@@ -474,7 +474,8 @@
     await Lab.waitFire(() => Lab.total() >= 1);
     await checkPrediction(run, p1, `Detector ${Lab.log[0] === 'd1' ? 'A' : 'B'} clicked with **one whole photon**. The other stayed silent.`);
     await say([
-      'Notice that the photon is never shared. Every photon gives exactly **one** click.',
+      'Notice that the photon is never shared. Every photon gives exactly **one** click: light **arrives as a particle**, delivering all its energy hf at once.',
+      'The beamsplitter is like a coin toss for each photon: P(T) = P(R) = 0.5, and P(T) + P(R) = 1 because the photon must leave somewhere.',
       'A note on honesty: this computer isn’t quantum. It rolls ordinary pseudo-random dice using the probabilities quantum mechanics **predicts**. What you’re here to learn is those predictions.',
     ]);
     const p2 = await predict({
@@ -554,7 +555,8 @@
     await checkPrediction(run, p, `All **${Lab.counts.d1}** photons arrived at D1. D2 stayed completely dark!`);
     await say([
       'Think about it: if each photon went down just **one** path, BS2 would split it 50/50 and D2 would click half the time. It **never** does.',
-      'So we can’t say the photon took one path. We have to add **probability amplitudes**, one for each path. Let me show you.',
+      'Classically we’d multiply probabilities: P(TT) = P(TR) = P(RT) = P(RR) = ½ × ½ = ¼, so each detector should get ¼ + ¼ = ½. Experiment says 1 and 0!',
+      'Quantum mechanics uses complex **probability amplitudes** as weights instead. The photon leaves BS1 in a **superposition** of both paths, and **each photon interferes with itself**. Let me show you.',
     ]);
     await Explainer.open({ tab: 'paths', guided: ['paths', 'graphs', 'halves'], phaseDeg: 0, block: false, lockPhase: true, lockBlock: true });
     Lab.cfg.overlayAllowed = true;
@@ -790,6 +792,8 @@
     await say([
       'Here’s the **key discovery**: with the holder empty, D2 has **0%** probability. So a dark click can **only** happen if something is blocking the lower path.',
       'And that photon was detected at D2, so it was **never absorbed**. You can detect the specimen without a single photon touching it!',
+      'Why? The specimen is a **which-path detector**: it makes the two paths distinguishable, so the cancellation at D2 is destroyed. “No particle” doesn’t mean no effect!',
+      'Conditional probability gives the numbers: P(D2) = P(not absorbed) × P(D2 | not absorbed) = ½ × ½ = ¼.',
       'But a **bright** click happens 100% of the time when empty and 25% when present. On its own it’s **inconclusive**.',
     ]);
     const states = shuffle([true, false, Math.random() < 0.5]);

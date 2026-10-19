@@ -192,8 +192,8 @@
         }
         ctx.stroke();
       });
-      txt(ctx, '— via upper path', p.x + 12, 252, GOLD, 13);
-      txt(ctx, '— via lower path', p.x + 130, 252, CORAL, 13);
+      txt(ctx, p.title.includes('D1') ? '— A(RT), upper' : '— A(RR), upper', p.x + 12, 252, GOLD, 13);
+      txt(ctx, p.title.includes('D1') ? '— A(TR), lower' : '— A(TT), lower', p.x + 130, 252, CORAL, 13);
       txt(ctx, '— sum', p.x + 250, 252, '#fff', 13);
       if (p.P < 0.005) txt(ctx, 'cancel: flat line', p.x + w / 2, cy - 30, '#fff', 14, 'center');
     });
@@ -201,8 +201,8 @@
 
   function drawCombine(ctx, a, s) {
     const panels = [
-      { cx: 190, title: 'To D1', c: a.contrib.d1, P: a.P.d1, notes: ['upper: reflect, then transmit', 'lower: transmit, φ, then reflect'] },
-      { cx: 570, title: 'To D2', c: a.contrib.d2, P: a.P.d2, notes: ['upper: reflect, then reflect', 'lower: transmit, φ, then transmit'] },
+      { cx: 190, title: 'To D1 (bright)', c: a.contrib.d1, P: a.P.d1, notes: ['A(RT): reflect, mirror, transmit', 'A(TR): transmit, φ, mirror, reflect'] },
+      { cx: 570, title: 'To D2 (dark)', c: a.contrib.d2, P: a.P.d2, notes: ['A(RR): reflect, mirror, reflect', 'A(TT): transmit, φ, mirror, transmit'] },
     ];
     const R = 110;
     panels.forEach((p) => {
@@ -297,25 +297,33 @@
 
   const TEXT = {
     paths: (a, s) => `
-      <p>After BS1 the photon has an <b class="hl">amplitude</b> for each path. An amplitude is a complex number: picture it as an <b>arrow</b>.
-      Its <b>length²</b> is a probability and its <b>direction</b> is the phase.</p>
+      <p>BS1 acts like the matrix M = (1/√2)(1 i; i 1). The photon leaves in a <b class="hl">superposition</b> of both paths:
+      (|0⟩ + i|1⟩)/√2, with |0⟩ = lower (transmitted) and |1⟩ = upper (reflected, picks up the factor i).</p>
+      <p>Each coefficient is a <b class="hl">probability amplitude</b>, a complex number you can picture as an <b>arrow</b>.
+      Its <b>length²</b> is a probability (here |1/√2|² = |i/√2|² = ½) and its <b>direction</b> is the phase.</p>
       <p>Each path has |a|² = 0.50. That means a <i>50% chance of finding the photon there if you looked</i>, not half a photon travelling each way.
       ${s.block ? 'The specimen absorbs the lower path: that 50% becomes the absorption probability, and nothing continues past it.' : ''}</p>`,
     graphs: (a, s) => `
       <p>These graphs plot the <b class="hl">probability amplitudes</b> arriving at each detector, one from each path, drawn as waves.
       They are not the energy of half a photon. To get a probability, <b>add the two waves first, then square the size of the sum</b>.</p>
+      <p class="muted">Same maths as classical waves (lecture 3b): adding A₁ sin(kx − ωt + φ₁) and A₂ sin(kx − ωt + φ₂) gives
+      A₁² + A₂² + 2A₁A₂ cos(φ₁ − φ₂). Only the phase difference matters. The difference here: the waves are amplitudes for ONE photon.</p>
       <p>${a.P.d2 < 0.005 && !s.block ? 'At D2 the two waves are exactly out of step and cancel: D2 stays dark.' : s.block ? 'With the lower path blocked only one wave arrives. There is nothing to cancel against, so both detectors get 25%.' : 'Try the phase slider and watch the waves slide in and out of step.'}</p>`,
     combine: (a, s) => `
-      <p><b>Rule:</b> transmission keeps the arrow’s direction (×1/√2). Reflection turns it a quarter-turn (×i/√2). The phase shifter turns the lower arrow by φ.</p>
+      <p><b>Rules (lecture 3b):</b> transmission multiplies by √T = 1/√2, reflection by i√R = i/√2 (a quarter-turn), and each mirror by i. The phase shifter turns the lower arrow by φ.
+      Multiply along a path, add the paths that end in the same place, square at the end.</p>
       <p>At BS2, place the two arrows head-to-tail (<span class="hl">upper</span> then <span class="hl2">lower</span>).
       The white resultant’s length squared is the probability.</p>
-      <p>At φ = 0°, each route to D1 has one reflection, so the arrows line up. To D2 the upper route has two reflections (i·i = −1) and the lower has none, so the arrows point opposite ways and cancel.
+      <p>At φ = 0°: A(RT) = A(TR) = −½, so P(D1) = |−½ − ½|² = 1. A(RR) = −i/2 and A(TT) = +i/2, so P(D2) = 0.
+      Classically we would add probabilities instead (¼ + ¼ = ½ for each detector); the quantum cross term makes one port 1 and the other 0.
       ${s.block ? 'With the lower path blocked, the coral arrow is gone: only the gold one arrives, giving ¼ at each detector.' : s.phase % 360 ? `At φ = ${s.phase}° the coral arrow is turned, so neither detector gets perfect adding or cancelling.` : ''}</p>`,
     halves: () => `
       <p><b>An amplitude is not a piece of the photon.</b> A photon’s energy E = hf is never split.
       If the photon really split into two half-energy pieces, both detectors would register a half-sized blip every time.</p>
       <p>Experiments see the opposite: exactly <b>one</b> detector clicks, always with the <b>full</b> energy hf
-      (Grangier, Roger &amp; Aspect, 1986). The amplitudes only decide the <i>probability</i> of where the whole photon turns up.</p>`,
+      (Grangier, Roger &amp; Aspect, 1986). The amplitudes only decide the <i>probability</i> of where the whole photon turns up.</p>
+      <p>Light <b>travels as a wave</b> (exploring both paths and interfering with itself) but <b>arrives as a particle</b>, delivering all its energy at once.
+      The photon is not interfering with another photon: each photon interferes with itself.</p>`,
   };
 
   /**

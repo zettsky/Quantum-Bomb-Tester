@@ -6,9 +6,15 @@
  *   LOWER path (transmitted). The lower path holds the phase shifter and the
  *   specimen holder. BS2 recombines the paths towards D1 and D2.
  *
- * Convention (as in most textbooks):
- *   transmission amplitude  t = 1/√2
- *   reflection amplitude    r = i/√2   (a quarter-turn, 90° phase)
+ * Convention (HSI2011 lecture 3b):
+ *   beamsplitter matrix     M = (1/√2)(1 i; i 1)
+ *   transmission amplitude  √T = 1/√2
+ *   reflection amplitude    i√R = i/√2   (a quarter-turn, 90° phase)
+ *   each mirror             × i          (one mirror on each path)
+ * Multiply along a path, add the paths that end in the same place, square at the end.
+ * Path labels follow the lecture: A(RT) = reflected at BS1, transmitted at BS2, etc.
+ *   bright port D1: A(RT) + A(TR) = −½ − ½  → P = 1
+ *   dark port   D2: A(RR) + A(TT) = −i/2 + i/2 → P = 0
  *
  * With phase φ on the lower path and nothing blocking it:
  *   P(D1) = cos²(φ/2)   P(D2) = sin²(φ/2)
@@ -32,6 +38,7 @@
   const ZERO = C(0, 0);
   const T = C(S, 0);
   const R = C(0, S);
+  const MIRROR = C(0, 1);
   const deg = (d) => (d * Math.PI) / 180;
   // Remove floating-point dust so "never" really means never.
   const clean = (p) => (p < 1e-12 ? 0 : p > 1 - 1e-12 ? 1 : p);
@@ -50,16 +57,19 @@
     const absorbed = specimen ? abs2(lower) : 0;
     const lowerAtBS2 = specimen ? ZERO : lower;
 
+    // Both paths bounce off one mirror before BS2.
+    const upperM = mul(upper, MIRROR);
+    const lowerM = mul(lowerAtBS2, MIRROR);
     let contrib;
     if (bs2) {
-      // D1 (right): upper transmits, lower reflects. D2 (up): upper reflects, lower transmits.
+      // D1 (right) gets A(RT) + A(TR); D2 (up) gets A(RR) + A(TT).
       contrib = {
-        d1: [mul(upper, T), mul(lowerAtBS2, R)],
-        d2: [mul(upper, R), mul(lowerAtBS2, T)],
+        d1: [mul(upperM, T), mul(lowerM, R)],
+        d2: [mul(upperM, R), mul(lowerM, T)],
       };
     } else {
       // No second beam splitter: each path runs straight into its own detector.
-      contrib = { d1: [upper, ZERO], d2: [ZERO, lowerAtBS2] };
+      contrib = { d1: [upperM, ZERO], d2: [ZERO, lowerM] };
     }
     const d1 = add(contrib.d1[0], contrib.d1[1]);
     const d2 = add(contrib.d2[0], contrib.d2[1]);
