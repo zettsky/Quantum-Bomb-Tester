@@ -40,6 +40,7 @@ In the lab, the player walks to five benches and a vault door. Each bench is one
 | 4. Find the specimen | Detect an absorber hidden in one path without damaging it | Interaction-free measurement |
 | 5. Defend your conclusion | Decide whether each outcome proves presence or leaves uncertainty | Evidence, inconclusive results, and limits |
 | Final: The Vault | Five sealed holders, 15 photons: find the specimens and keep them intact | Everything together |
+| Bonus lab | Tune the beamsplitter reflectivity to beat the 1/3 safe-detection limit | Efficiency r/(1+r) → ½; why the Zeno scheme is needed beyond that |
 
 Each level:
 
@@ -51,6 +52,11 @@ Each level:
 
 Prof. Lumen's **chat bubble** (in the HUD, the level header and the dialogue box) gives optional, more in-depth
 elaborations, unlocked by level.
+
+The Notebook also has a **Lab manual** (every modelling assumption and how real experiments differ) and a
+**Sources** tab (full citations with DOIs, and where each is used). **Settings → Presenter mode** unlocks every
+bench for live demos. See [`docs/PRESENTER_GUIDE.md`](docs/PRESENTER_GUIDE.md) for the rubric map, narrative arc,
+timed demo script and Q&A bank.
 
 ## The physics (as implemented)
 

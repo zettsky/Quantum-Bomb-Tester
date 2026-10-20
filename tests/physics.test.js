@@ -58,4 +58,17 @@ assert.strictEqual(P.verdictFromLog(['d2', 'absorbed']), 'damaged');
 near(P.posteriorPresent(1), 0.2, 'posterior after 1 bright');
 assert.ok(P.posteriorPresent(5) > 0, 'never proven absent');
 
+// Bonus lab: tunable reflectivity keeps D2 dark when empty, and r = 1/2 reproduces the 25/25/50 table
+for (const r of [0.1, 0.5, 0.8, 0.95]) {
+  const tu = P.tunable(r);
+  assert.strictEqual(tu.empty.d2, 0, `empty dark port @r=${r}`);
+  near(tu.empty.d1, 1, `empty bright port @r=${r}`);
+  near(tu.present.d1 + tu.present.d2 + tu.present.absorbed, 1, `normalised @r=${r}`);
+  near(tu.efficiency, r / (1 + r), `efficiency @r=${r}`);
+}
+const half = P.tunable(0.5);
+near(half.present.d1, 0.25, 'tunable D1'); near(half.present.d2, 0.25, 'tunable D2'); near(half.present.absorbed, 0.5, 'tunable abs');
+near(half.efficiency, 1 / 3, 'balanced efficiency 1/3');
+assert.ok(P.tunable(0.99).efficiency < 0.5, 'simple scheme never reaches 50%');
+
 console.log('All physics tests passed.');

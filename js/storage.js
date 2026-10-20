@@ -15,6 +15,7 @@
     reducedMotion: false,
     showExpected: true,
     largeText: false,
+    presenter: false, // unlocks every bench for live demos
   };
 
   function read(key) {
@@ -85,6 +86,11 @@
       try {
         localStorage.removeItem(SAVE_KEY);
       } catch (e) {}
+    },
+    /** Highest bench the player may open (presenter mode opens everything, incl. the Vault). */
+    unlocked() {
+      if (!save) return 1;
+      return settings.presenter ? 6 : save.unlocked;
     },
     totals() {
       const t = { earned: 0, possible: 0, detections: 0, damage: 0, done: 0 };

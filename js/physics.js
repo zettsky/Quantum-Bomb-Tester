@@ -105,7 +105,37 @@
     return { mean: N * p, sd: Math.sqrt(N * p * (1 - p)) };
   }
 
-  const api = { C, add, mul, abs, abs2, arg, expi, T, R, deg, analyse, sample, verdictFromLog, posteriorPresent, binomial };
+  /**
+   * Bonus lab: an unbalanced interferometer. BS1 reflects with probability r
+   * (upper path) and transmits t = 1 − r into the lower path, where the specimen sits.
+   * BS2 is the mirror image (reflectivity t), which keeps D2 perfectly dark when empty:
+   *   A(RR) + A(TT) = −i√(r·t) + i√(t·r) = 0.
+   * With an absorbing specimen present:
+   *   P(absorbed) = t,  P(D2) = r·t,  P(D1) = r².
+   * Firing until something conclusive (dark click or absorption) happens, the safe-detection
+   * efficiency is r·t / (r·t + t) = r / (1 + r): 1/3 at r = ½, approaching ½ as r → 1.
+   */
+  function tunable(r) {
+    const t = 1 - r;
+    const sr = Math.sqrt(r);
+    const st = Math.sqrt(t);
+    const upper = mul(C(0, sr), MIRROR); // reflect at BS1, mirror
+    const lower = mul(C(st, 0), MIRROR); // transmit at BS1, mirror
+    const T2 = C(sr, 0); // BS2 transmission √r
+    const R2 = C(0, st); // BS2 reflection i√t
+    const emptyD2 = add(mul(upper, R2), mul(lower, T2));
+    const emptyD1 = add(mul(upper, T2), mul(lower, R2));
+    const present = { d1: clean(abs2(mul(upper, T2))), d2: clean(abs2(mul(upper, R2))), absorbed: clean(t) };
+    return {
+      r,
+      empty: { d1: clean(abs2(emptyD1)), d2: clean(abs2(emptyD2)), absorbed: 0 },
+      present,
+      efficiency: present.d2 / (present.d2 + present.absorbed),
+      photonsPerConclusive: 1 / (present.d2 + present.absorbed),
+    };
+  }
+
+  const api = { C, add, mul, abs, abs2, arg, expi, T, R, deg, analyse, sample, verdictFromLog, posteriorPresent, binomial, tunable };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.QBT = root.QBT || {};
   root.QBT.Physics = api;

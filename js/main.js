@@ -1,7 +1,7 @@
 /* Quantum Bomb Tester — boot, screens, HUD, settings, notebook and input routing. */
 (function () {
   'use strict';
-  const { Settings, Save, Audio, Sprites, UI, Chat, World, Levels, Content, Explainer } = window.QBT;
+  const { Settings, Save, Audio, Sprites, UI, Chat, World, Levels, Content, Explainer, Bonus } = window.QBT;
   const $ = (id) => document.getElementById(id);
   let screen = 'title';
 
@@ -55,7 +55,7 @@
     if (Settings.get().music > 0) Audio.startMusic();
     show('game');
     UI.mountDialog(null);
-    Chat.setContext(null, Save.get().unlocked);
+    Chat.setContext(null, Save.unlocked());
   }
 
   async function intro() {
@@ -83,13 +83,13 @@
     for (let i = 1; i <= 5; i++) {
       const L = Content.levels[i - 1];
       const rec = s.levels[i];
-      const locked = i > s.unlocked;
+      const locked = i > Save.unlocked();
       const ic = rec && rec.done ? Sprites.icon(L.insight.icon) : locked ? Sprites.icon('lock') : `<span class="num">${i}</span>`;
       const stars = rec && rec.done ? `<span class="mini-stars">${'★'.repeat(rec.bestStars)}${'☆'.repeat(3 - rec.bestStars)}</span>` : '';
-      slots.push(`<div class="slot ${i === s.unlocked && !(rec && rec.done) ? 'current' : ''} ${locked ? 'locked' : ''}" title="Level ${i}: ${L.title}${locked ? ' (locked)' : ''}">${ic}${stars}</div>`);
+      slots.push(`<div class="slot ${i === Save.unlocked() && !(rec && rec.done) ? 'current' : ''} ${locked ? 'locked' : ''}" title="Level ${i}: ${L.title}${locked ? ' (locked)' : ''}">${ic}${stars}</div>`);
     }
     const v = s.levels[6];
-    slots.push(`<div class="slot vault ${s.unlocked >= 6 && !v ? 'current' : ''} ${s.unlocked < 6 ? 'locked' : ''}" title="Final challenge: the Vault">${v ? Sprites.icon('star') : s.unlocked >= 6 ? '<span class="num">V</span>' : Sprites.icon('lock')}</div>`);
+    slots.push(`<div class="slot vault ${Save.unlocked() >= 6 && !v ? 'current' : ''} ${Save.unlocked() < 6 ? 'locked' : ''}" title="Final challenge: the Vault">${v ? Sprites.icon('star') : Save.unlocked() >= 6 ? '<span class="num">V</span>' : Sprites.icon('lock')}</div>`);
     $('hud-slots').innerHTML = slots.join('');
     const t = Save.totals();
     $('hud-stats').innerHTML = `
@@ -105,7 +105,7 @@
     Audio.play('select');
     if (target.kind === 'prof') return talkToProf();
     const id = target.kind === 'vault' ? 6 : target.id;
-    if (id > s.unlocked) {
+    if (id > Save.unlocked()) {
       Audio.play('bad');
       UI.toast(Sprites.icon('lock') + (id === 6 ? ' The Vault opens once all five levels are complete.' : ` Complete level ${id - 1} first.`));
       return;
@@ -134,9 +134,9 @@
     await Levels.open(id, () => {
       renderHUD();
       World.rebuild();
-      Chat.setContext(null, Save.get().unlocked);
+      Chat.setContext(null, Save.unlocked());
     });
-    if (id === 5 && Save.get().unlocked >= 6 && !Save.get().levels[6]) {
+    if (id === 5 && Save.unlocked() >= 6 && !Save.get().levels[6]) {
       try {
         await UI.say(['Superb! You’ve mastered all five benches. The **Vault** door (top right) is now open for the final challenge.']);
       } catch (e) {}
@@ -145,11 +145,11 @@
 
   async function talkToProf() {
     const s = Save.get();
-    const next = Math.min(6, s.unlocked);
+    const next = Math.min(6, Save.get().unlocked);
     try {
       const r = await UI.choose({
         prompt: next === 6 && s.finalResult ? 'You’ve finished everything. Wonderful work! Replay any bench to improve your stars, or ask me anything.' : 'Hello again! How can I help?',
-        options: ['What should I do next?', 'I have a question (open the chat)', 'Show me the Amplitude Explorer', 'Bye!'],
+        options: ['What should I do next?', 'I have a question (open the chat)', 'Show me the Amplitude Explorer', 'Bonus lab: can we beat the 1/3 limit?', 'Bye!'],
       });
       if (r.index === 0) {
         const meta = next === 6 ? Content.finale : Content.levels[next - 1];
@@ -159,8 +159,11 @@
         ]);
       } else if (r.index === 1) Chat.open();
       else if (r.index === 2) {
-        if (s.unlocked < 3) await UI.say(['Finish **bench 2** first. That’s where amplitudes are introduced.']);
+        if (Save.unlocked() < 3) await UI.say(['Finish **bench 2** first. That’s where amplitudes are introduced.']);
         else await Explainer.open({ tab: 'paths' });
+      } else if (r.index === 3) {
+        if (!s.finalResult && !Settings.get().presenter) await UI.say(['That’s an advanced challenge. Finish the **Vault** first, then come back to me!']);
+        else await Bonus.open();
       }
     } catch (e) {
       /* aborted */
@@ -194,6 +197,8 @@
       <h4>Accessibility</h4>
       ${toggle('largeText', 'Larger text')}
       ${toggle('reducedMotion', 'Reduce motion (no screen shake, instant photons)')}
+      <h4>Presenting</h4>
+      ${toggle('presenter', 'Presenter mode: unlock every bench, the Vault and the bonus lab (for live demos)')}
       <h4>Controls</h4>
       <p class="muted">Move: arrow keys / WASD · Interact / advance text: E, Enter or Space · Answer: 1–4 · Send photon: F · Notebook: N · Chat: C · Menu / leave level: Esc</p>
       ${Save.exists() ? '<h4>Data</h4><button type="button" class="btn small danger" id="reset-progress">Erase saved progress</button>' : ''}`;
@@ -207,6 +212,10 @@
       } else if (e.target.type === 'checkbox') {
         Settings.set(k, e.target.checked);
         applySettings();
+        if (k === 'presenter' && screen === 'game') {
+          renderHUD();
+          World.rebuild();
+        }
       }
     });
     body.addEventListener('change', (e) => {
@@ -252,6 +261,8 @@
       { id: 'evidence', label: 'Evidence table' },
       { id: 'progress', label: 'Progress' },
       { id: 'notes', label: 'Your explanations' },
+      { id: 'manual', label: 'Lab manual' },
+      { id: 'sources', label: 'Sources' },
     ];
     body.innerHTML = `<div class="tabs">${tabs.map((t) => `<button type="button" class="tab" data-tab="${t.id}">${t.label}</button>`).join('')}</div><div class="nb-body"></div>`;
     const nb = body.querySelector('.nb-body');
@@ -281,7 +292,7 @@
         nb.innerHTML = `<table class="px-table"><thead><tr><th>Level</th><th>Stars</th><th>Understanding</th><th>Warm-up → Check</th><th>Safe det.</th><th>Damaged</th></tr></thead><tbody>${rows.join('')}</tbody>
           <tfoot><tr><td>Total</td><td></td><td>${t.earned}/${t.possible}</td><td></td><td>${t.detections}</td><td>${t.damage}</td></tr></tfoot></table>
           <p class="muted">Understanding is earned by reasoning. Safe detections and damage depend partly on luck, so they are tracked separately.</p>
-          <button type="button" class="btn small" id="copy-report">Copy report for my teacher</button>`;
+          <button type="button" class="btn small" id="copy-report">Copy report</button>`;
         nb.querySelector('#copy-report').addEventListener('click', async () => {
           const text = Levels.reportText();
           try {
@@ -291,6 +302,18 @@
             UI.modal({ title: 'Your report', body: `<textarea class="report-box" readonly rows="14">${UI.esc(text)}</textarea>`, buttons: [{ label: 'Close' }] });
           }
         });
+      } else if (id === 'manual') {
+        nb.innerHTML = `<p>Every model makes assumptions. Here is what this lab assumes, and how real experiments differ.</p>
+          <table class="px-table"><thead><tr><th>The game assumes…</th><th>In a real lab…</th></tr></thead><tbody>${Content.assumptions
+            .map((x) => `<tr><td>${x.a}</td><td>${x.real}</td></tr>`)
+            .join('')}</tbody></table>
+          <p class="muted">Because of these limits, real interaction-free measurements report the dark-detector “visibility” and detector noise alongside their results.</p>
+          ${s.finalResult || Settings.get().presenter ? '<button type="button" class="btn small" id="nb-bonus">Open the bonus lab: beat the 1/3 limit</button>' : '<p class="muted">Finish the Vault to unlock the bonus lab.</p>'}`;
+        const bb = nb.querySelector('#nb-bonus');
+        if (bb) bb.addEventListener('click', () => Bonus.open());
+      } else if (id === 'sources') {
+        nb.innerHTML = `<p>The physics and claims in this game come from these sources:</p>
+          <ol class="sources">${Content.sources.map((x) => `<li><div>${UI.esc(x.cite)}</div><div class="muted small">Used for: ${UI.esc(x.used)}</div></li>`).join('')}</ol>`;
       } else {
         const notes = [];
         Object.values(s.levels).forEach((r) => (r.notes || []).forEach((n) => notes.push(n)));

@@ -436,3 +436,14 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .dlg-portrait canvas { width: 52px; height: 52px; }
   .level-card .card-row, .slider-row { grid-template-columns: 1fr; }
 }
+
+/* bonus lab + notebook sources */
+.bonus-stats { margin: 8px 0; }
+.bonus-run { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.bonus-out { margin: 6px 0 10px; min-height: 1.4em; }
+.bonus-q { display: grid; gap: 6px; background: var(--teal); padding: 10px; margin-top: 8px; }
+.bonus-q .choice.picked { background: var(--gold); }
+.bonus-fb p { margin: 4px 0 0; }
+.sources { padding-left: 1.4em; display: grid; gap: 8px; }
+.sources li { word-break: break-word; }
+.phase-ctl { white-space: nowrap; }

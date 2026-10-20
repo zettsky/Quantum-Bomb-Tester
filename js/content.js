@@ -459,5 +459,29 @@
     { outcome: 'Photon absorbed; specimen damaged', absent: '0%', present: '50%' },
   ];
 
-  window.QBT.Content = { levels, finale, quizzes, chat, evidenceTable };
+  // What the model assumes, and how the real world differs. Shown in the Notebook's "Lab manual".
+  const assumptions = [
+    { a: 'A true single-photon source: exactly one photon per shot.', real: 'Real “single-photon” sources sometimes emit zero or two photons; experiments check this with coincidence counts.' },
+    { a: 'Ideal, lossless 50:50 beamsplitters (P(T) = P(R) = ½) and perfect mirrors.', real: 'Real splitting ratios differ slightly from 50:50, so the cancellation at D2 is never perfect.' },
+    { a: 'Perfectly indistinguishable paths (equal lengths, perfect overlap), so interference is complete.', real: 'Imperfect overlap lowers the interference “visibility”. D2 then clicks occasionally even with an empty holder.' },
+    { a: 'A stable phase: φ stays where you set it.', real: 'Temperature and vibration make the phase drift, so real interferometers must be re-calibrated (see Level 5, case 5).' },
+    { a: 'Perfect detectors: every photon that arrives is counted and there are no false clicks.', real: 'Real detectors miss some photons and produce occasional “dark counts” (see Level 5, case 6).' },
+    { a: 'A perfectly absorbing specimen: any photon reaching it is absorbed and damages it.', real: 'Real samples may absorb only partially, which changes the probabilities.' },
+    { a: 'Outcomes are drawn by an ordinary pseudo-random number generator using the quantum predictions.', real: 'The game teaches the predictions. It is not evidence that anything quantum happens inside the computer.' },
+  ];
+
+  // Sources behind the game's claims, and where each one is used.
+  const sources = [
+    { cite: 'Y. Gao, HSI2011 lecture 3b: Wave–particle duality & quantum interference (2026).', used: 'Beamsplitter matrix M, path amplitudes A(RT), A(TR), A(RR), A(TT), classical vs quantum weights, Hong–Ou–Mandel.' },
+    { cite: 'Y. Gao, HSI2011 lecture 2a: Uncertainty & measurements in QM (2026).', used: 'Random single outcomes, statistics of repeats, measurement collapse, conditional probability.' },
+    { cite: 'Y. Gao, HSI2011 lecture 5a: Experiments that shaped quantum theory (2026).', used: 'Wave–particle duality (“travels as a wave, arrives as a particle”), which-path information.' },
+    { cite: 'A. C. Elitzur & L. Vaidman, “Quantum mechanical interaction-free measurements”, Found. Phys. 23, 987–997 (1993). doi:10.1007/BF00736012', used: 'The bomb-tester idea and the 25% / 25% / 50% probabilities (Level 4, Vault).' },
+    { cite: 'P. Kwiat, H. Weinfurter, T. Herzog, A. Zeilinger & M. Kasevich, “Interaction-free measurement”, Phys. Rev. Lett. 74, 4763 (1995). doi:10.1103/PhysRevLett.74.4763', used: 'First demonstration with real photons; the 50% limit of the simple scheme and the Zeno proposal (Bonus lab).' },
+    { cite: 'P. G. Kwiat, A. G. White, J. R. Mitchell, O. Nairz, G. Weihs, H. Weinfurter & A. Zeilinger, “High-efficiency quantum interrogation measurements via the quantum Zeno effect”, Phys. Rev. Lett. 83, 4725 (1999). doi:10.1103/PhysRevLett.83.4725', used: 'Safe-detection efficiencies beyond the 50% limit (Bonus lab, professor chat).' },
+    { cite: 'P. Grangier, G. Roger & A. Aspect, “Experimental evidence for a photon anticorrelation effect on a beam splitter”, Europhys. Lett. 1, 173 (1986). doi:10.1209/0295-5075/1/4/004', used: 'A single photon is never detected at both outputs at once (the “Not half-photons!” tab).' },
+    { cite: 'C. K. Hong, Z. Y. Ou & L. Mandel, “Measurement of subpicosecond time intervals between two photons by interference”, Phys. Rev. Lett. 59, 2044 (1987). doi:10.1103/PhysRevLett.59.2044', used: 'Two-photon bunching mentioned in the chat (“What exactly is interfering?”).' },
+    { cite: 'B. P. Abbott et al. (LIGO Scientific & Virgo Collaborations), “Observation of gravitational waves from a binary black hole merger”, Phys. Rev. Lett. 116, 061102 (2016). doi:10.1103/PhysRevLett.116.061102', used: 'Interferometers as real measurement tools (professor chat).' },
+  ];
+
+  window.QBT.Content = { levels, finale, quizzes, chat, evidenceTable, assumptions, sources };
 })();

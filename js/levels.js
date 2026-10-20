@@ -873,6 +873,23 @@
         ],
         explain: 'Proof depends on **calibration**. Real experiments must check that the dark detector really is dark.',
       },
+      {
+        log: ['d2'],
+        prompt: 'Case 6: a **real** lab measured its empty interferometer and found D2 still clicks for **1 photon in 200** (detector noise and imperfect cancellation). One photon: the **dark** detector clicked. What is the most honest conclusion?',
+        options: [
+          'Absolute proof that the specimen is present',
+          'Strong evidence (about 98% likely, starting from 50/50), but not absolute proof',
+          'No information at all: the detector is noisy',
+          'Proof that the holder is empty',
+        ],
+        answer: 1,
+        reasons: [
+          'D2 clicks 25% of the time with a specimen but 0.5% without: 50 times more likely, yet not impossible when empty',
+          'Any dark click is always proof, whatever the equipment',
+          'Noise makes every click meaningless',
+        ],
+        explain: 'Real devices have **limits**. P(present | dark) = 0.25 / (0.25 + 0.005) ≈ 98%. Good scientists quote how strong their evidence is.',
+      },
     ];
     for (let i = 0; i < cases.length; i++) {
       const cs = cases[i];
@@ -890,7 +907,10 @@
     }
     Lab.cfg.phaseDeg = 0;
     Diagram.set({ phaseDeg: 0 });
-    await say(['Remember the summary: **dark click = proof (intact)**, **absorption = proof (damaged)**, **bright click = inconclusive**, and **calibrate first**.']);
+    await say([
+      'Remember the summary: **dark click = proof (intact)**, **absorption = proof (damaged)**, **bright click = inconclusive**, and **calibrate first**.',
+      'All of this assumes ideal equipment. The **Lab manual** in your Notebook lists every assumption the game makes, and how real experiments differ.',
+    ]);
     await quiz(run, 'post');
   }
 
@@ -950,7 +970,7 @@
     $('lvl-title').textContent = id === 6 ? meta.title : `Level ${id} · ${meta.title}`;
     renderStats(run);
     UI.mountDialog($('level-dialog'));
-    Chat.setContext(id === 6 ? null : id, Save.get() ? Math.min(5, Save.get().unlocked) : 1);
+    Chat.setContext(id === 6 ? null : id, Math.min(5, Save.unlocked()));
     Diagram.start();
     const s = Save.get();
     if (s) {
@@ -1076,6 +1096,7 @@
             <div class="stat ${run.damage ? 'bad' : ''}">${Sprites.icon('damage')}<b>${run.damage}</b><span>Specimens damaged</span></div>
           </div>
           <p>Why is detection scored separately? Even with perfect play, this interferometer finds a present specimen safely only <b>1 time in 3</b> (dark 25% vs absorbed 50%). Luck decides which; your <b>reasoning</b> is what you control.</p>
+          <p>Want to beat 1 in 3? Ask Prof. Lumen about the <b class="hl">bonus lab</b>, where tuning the beamsplitters pushes the limit towards 1/2.</p>
           <p class="muted">Open the Notebook in the lab to see your full progress report and copy it for your teacher.</p>
         </div>`,
       buttons: [{ label: 'Back to the lab ▶' }],

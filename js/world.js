@@ -68,7 +68,7 @@
     canvas.dataset.scale = s;
   }
 
-  const unlocked = () => (Save.get() ? Save.get().unlocked : 1);
+  const unlocked = () => Save.unlocked();
   const levelRec = (id) => (Save.get() && Save.get().levels[id]) || null;
 
   // ---------- static layer ----------
